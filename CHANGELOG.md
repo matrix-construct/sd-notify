@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+ - added support for abstract sockets passed in `NOTIFY_SOCKET` on Linux
+
 ## [0.5.0] - 2025-01-18
 
 ### Changed

@@ -292,6 +292,20 @@ fn borrowed_fd_slice<'a>(s: &'a [BorrowedFd<'_>]) -> &'a [RawFd] {
 
 fn connected_unix_datagram(path: &OsStr) -> io::Result<UnixDatagram> {
     let result = UnixDatagram::unbound()?;
+
+    #[cfg(target_os = "linux")]
+    {
+        use std::os::linux::net::SocketAddrExt;
+        use std::os::unix::ffi::OsStrExt;
+        use std::os::unix::net::SocketAddr;
+
+        if let Some(name) = path.as_bytes().strip_prefix(b"@") {
+            let addr = SocketAddr::from_abstract_name(name)?;
+            result.connect_addr(&addr)?;
+            return Ok(result);
+        }
+    }
+
     result.connect(path)?;
     Ok(result)
 }
